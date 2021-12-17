@@ -56,7 +56,7 @@ if __name__ == '__main__':
     if len(sys.argv) == 1:
         convert_print_to_logger_info('target_file.py', 'target_file_mod.py')
     elif len(sys.argv) == 2:
-        input_file = sys.argv[2]
+        input_file = sys.argv[1]
         if not '.py' in input_file:
             sys.exit()
         output_file = input_file.replace('.py', '_mod.py')

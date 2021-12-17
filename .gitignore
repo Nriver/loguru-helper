@@ -1,3 +1,6 @@
+# nate's custom
+loguru_helper.exe
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
