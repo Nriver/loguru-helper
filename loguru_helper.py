@@ -59,7 +59,7 @@ if __name__ == '__main__':
         input_file = sys.argv[2]
         if not '.py' in input_file:
             sys.exit()
-        output_file = input_file.replace('.py', '_new.py')
+        output_file = input_file.replace('.py', '_mod.py')
         convert_print_to_logger_info(input_file, output_file)
 
     logger.info('finish')
