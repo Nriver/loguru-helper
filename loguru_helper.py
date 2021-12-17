@@ -2,7 +2,7 @@
 # @Author: Nriver
 # @Date:   2021-12-17 14:02:53
 # @Last Modified by:   Nriver
-# @Last Modified time: 2021-12-17 14:48:58
+# @Last Modified time: 2021-12-17 14:55:56
 import os
 import re
 from loguru import logger
@@ -12,9 +12,9 @@ new_content = 'from loguru import logger\n'
 # print 批量替换成 loguru的logger.info
 # replace all print with logger.info for loguru module
 
-with open('target_file.py', 'r', encoding='utf-8') as f:
+with open(r'target_file.py', 'r', encoding='utf-8') as f:
     for line in f:
-        if line.strip().startswith('print'):
+        if any(line.strip().startswith(keyword) for keyword in ['print(', '# print(']):
 
             switch = 10
             switch = 20

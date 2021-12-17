@@ -2,7 +2,7 @@
 # @Author: Nriver
 # @Date:   2021-12-17 14:02:53
 # @Last Modified by:   Nriver
-# @Last Modified time: 2021-12-17 14:37:08
+# @Last Modified time: 2021-12-17 14:54:55
 
 a = 'aaa'
 b = 'bbb'
@@ -21,3 +21,7 @@ print(a, 111, b)
 print(f'{a}')
 print(f'{a, b}')
 print(f'{a, b} 111')
+# print(f'{a, b} 111')
+
+for x in range(5):
+    print(x, a, b)
