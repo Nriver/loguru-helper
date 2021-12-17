@@ -1,29 +1,19 @@
-# -*- coding: utf-8 -*-
-# @Author: Nriver
-# @Date:   2021-12-17 14:02:53
-# @Last Modified by:   Nriver
-# @Last Modified time: 2021-12-17 14:55:56
-import os
 import re
+import sys
+
 from loguru import logger
 
-new_content = 'from loguru import logger\n'
 
-# print 批量替换成 loguru的logger.info
-# replace all print with logger.info for loguru module
+def convert_print_to_logger_info(input_file, output_file):
+    new_content = 'from loguru import logger\n'
 
-with open(r'target_file.py', 'r', encoding='utf-8') as f:
-    for line in f:
-        if any(line.strip().startswith(keyword) for keyword in ['print(', '# print(']):
+    # print 批量替换成 loguru的logger.info
+    # replace all print with logger.info for loguru module
 
-            switch = 10
-            switch = 20
+    with open(input_file, 'r', encoding='utf-8') as f:
+        for line in f:
+            if any(line.strip().startswith(keyword) for keyword in ['print(', '# print(']):
 
-            if switch == 10:
-                # 暴力替换, 用tuple括起来
-                # simple quote everything with tuple
-                new_line = re.sub('print\((.*?)\)', 'logger.info((\\1))', line)
-            elif switch == 20:
                 # 用 f-string 替换
                 # replace with f-string
 
@@ -39,24 +29,37 @@ with open(r'target_file.py', 'r', encoding='utf-8') as f:
                     # 有双引号的用单引号括起来 再加f-string
                     # string with " inside
                     new_line = re.sub('print\((.*?)\)', "logger.info(f'{(\\1)}')", line)
-                elif not('"' in line or "'" in line):
+                elif not ('"' in line or "'" in line):
                     # 没有引号的直接用 单引号括起来 再加f-string
                     # string without ' or "
                     new_line = re.sub('print\((.*?)\)', "logger.info(f'{(\\1)}')", line)
                 else:
                     # other cases
+                    logger.error('unrecognized case !')
                     logger.error(line)
-                    logger.error('异常')
                     exit()
+
+                # 移除多余的括号
+                # remove redundant brackets
                 new_line = new_line.replace('{(', '{')
                 new_line = new_line.replace(')}', '}')
 
-            new_content += new_line
-        else:
-            new_content += line
+                new_content += new_line
+            else:
+                new_content += line
+
+    with open(output_file, 'w', encoding='utf-8') as f:
+        f.write(new_content)
 
 
-with open('target_file_mod.py', 'w', encoding='utf-8') as f:
-    f.write(new_content)
+if __name__ == '__main__':
+    if len(sys.argv) == 1:
+        convert_print_to_logger_info('target_file.py', 'target_file_mod.py')
+    elif len(sys.argv) == 2:
+        input_file = sys.argv[2]
+        if not '.py' in input_file:
+            sys.exit()
+        output_file = input_file.replace('.py', '_new.py')
+        convert_print_to_logger_info(input_file, output_file)
 
-os.system('target_file_mod.py')
+    logger.info('finish')

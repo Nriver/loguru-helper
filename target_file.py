@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-# @Author: Nriver
-# @Date:   2021-12-17 14:02:53
-# @Last Modified by:   Nriver
-# @Last Modified time: 2021-12-17 14:54:55
+# sample python file with some print
 
 a = 'aaa'
 b = 'bbb'
