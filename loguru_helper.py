@@ -24,15 +24,15 @@ def convert_print_to_logger_info(input_file, output_file):
                 elif "'" in line:
                     # 有单引号的用双引号括起来 再加f-string
                     # string with ' inside
-                    new_line = re.sub('print\((.*?)\)', 'logger.info(f"{(\\1)}")', line)
+                    new_line = re.sub('print\((.*)\)', 'logger.info(f"{(\\1)}")', line)
                 elif '"' in line:
                     # 有双引号的用单引号括起来 再加f-string
                     # string with " inside
-                    new_line = re.sub('print\((.*?)\)', "logger.info(f'{(\\1)}')", line)
+                    new_line = re.sub('print\((.*)\)', "logger.info(f'{(\\1)}')", line)
                 elif not ('"' in line or "'" in line):
                     # 没有引号的直接用 单引号括起来 再加f-string
                     # string without ' or "
-                    new_line = re.sub('print\((.*?)\)', "logger.info(f'{(\\1)}')", line)
+                    new_line = re.sub('print\((.*)\)', "logger.info(f'{(\\1)}')", line)
                 else:
                     # other cases
                     logger.error('unrecognized case !')

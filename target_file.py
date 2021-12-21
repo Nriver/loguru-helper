@@ -18,6 +18,7 @@ print(f'{a}')
 print(f'{a, b}')
 print(f'{a, b} 111')
 # print(f'{a, b} 111')
+print('loguru_convert()', a)
 
 for x in range(5):
     print(x, a, b)
