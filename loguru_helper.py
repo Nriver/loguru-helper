@@ -17,10 +17,12 @@ def convert_print_to_logger_info(input_file, output_file):
                 # 用 f-string 替换
                 # replace with f-string
 
-                # 已经是 f-string 的就只替换print
+                # 已经是 f-string 的就只替换print, 跳过后续的处理
                 # already a f-string
-                if 'f"{' in line or "f'{" in line:
+                skip = False
+                if 'print(f"' in line or "print(f'" in line or 'f"{' in line or "f'{" in line:
                     new_line = line.replace('print', 'logger.info')
+                    skip = True
                 elif "'" in line:
                     # 有单引号的用双引号括起来 再加f-string
                     # string with ' inside
@@ -39,10 +41,11 @@ def convert_print_to_logger_info(input_file, output_file):
                     logger.error(line)
                     exit()
 
-                # 移除多余的括号
-                # remove redundant brackets
-                new_line = new_line.replace('{(', '{')
-                new_line = new_line.replace(')}', '}')
+                if not skip:
+                    # 移除多余的括号
+                    # remove redundant brackets
+                    new_line = new_line.replace('{(', '{')
+                    new_line = new_line.replace(')}', '}')
 
                 new_content += new_line
             else:
