@@ -1,6 +1,9 @@
+import os.path
 import re
 import sys
 
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QApplication, QWidget, QCheckBox, QGridLayout, QTextBrowser
 from loguru import logger
 
 
@@ -55,14 +58,84 @@ def convert_print_to_logger_info(input_file, output_file):
         f.write(new_content)
 
 
+class App(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.title = 'loguru转换工具 v1.0 by Nriver'
+        self.add_suffix = True
+        self.init_user_interface()
+
+    def init_user_interface(self):
+        self.setWindowTitle(self.title)
+        self.resize(300, 180)
+
+        # 窗口置顶
+        self.setWindowFlags(Qt.WindowStaysOnTopHint)
+
+        # 开启接受拖入事件
+        self.setAcceptDrops(True)
+
+        grid = QGridLayout()
+
+        # 文字框
+        self.text_browser = QTextBrowser()
+        self.text_browser.setAcceptDrops(True)
+
+        # 选项
+        self.check_box_add_suffix = QCheckBox('添加后缀')
+        self.check_box_add_suffix.setChecked(self.add_suffix)
+        self.check_box_add_suffix.clicked.connect(self.set_add_suffix)
+
+        grid.addWidget(self.text_browser, 0, 0)
+        grid.addWidget(self.check_box_add_suffix, 1, 0)
+
+        self.setLayout(grid)
+        self.show()
+
+    def set_add_suffix(self):
+        self.add_suffix = not self.add_suffix
+        logger.info(f"添加后缀 {self.add_suffix}")
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls:
+            event.accept()
+        else:
+            event.ingore()
+
+    def dropEvent(self, event):
+        # 获取文件路径
+        for url in event.mimeData().urls():
+            path = url.toLocalFile()
+            if os.path.isfile(path):
+                process_file(path, self.add_suffix)
+            else:
+                for root, dirs, files in os.walk(".", topdown=False):
+                    for name in files:
+                        input_path = os.path.join(root, name).replace('\\', '/')
+                        process_file(input_path, self.add_suffix)
+
+
+def process_file(input_file, add_suffix=True):
+    if not ('.py' in input_file and input_file[-3:] == '.py'):
+        logger.info(f'忽略 {input_file}')
+        return
+    logger.info(f'处理 {input_file}')
+    if add_suffix:
+        output_file = input_file.replace('.py', '_mod.py')
+    else:
+        output_file = input_file
+    convert_print_to_logger_info(input_file, output_file)
+
+
 if __name__ == '__main__':
     if len(sys.argv) == 1:
-        convert_print_to_logger_info('target_file.py', 'target_file_mod.py')
-    elif len(sys.argv) == 2:
-        input_file = sys.argv[1]
-        if not '.py' in input_file:
-            sys.exit()
-        output_file = input_file.replace('.py', '_mod.py')
-        convert_print_to_logger_info(input_file, output_file)
+        # convert_print_to_logger_info('target_file.py', 'target_file_mod.py')
+        logger.info('无参数, 启动pyqt界面')
+        app = QApplication(sys.argv)
+        ex = App()
+        sys.exit(app.exec_())
 
-    logger.info('finish')
+    elif len(sys.argv) == 2:
+        process_file(sys.argv[1])
+
+    logger.info('程序结束')
